@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "ChineseRoomTypes.h"
 #include "TheRoomMenu.generated.h"
 
 /**
@@ -22,15 +23,7 @@ class CHINESEROOM_API UTheRoomMenu : public UUserWidget
 public:
 	// Adds the menu to the player's screen and changes the input mode to UI
 	UFUNCTION(BlueprintCallable) // Allows the function to be called by Blueprints
-	void MenuSetup(int NumberOfPages);
-
-	// Tracks what page we are on, used to get the correct function
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) // Allows the variable to be seen and edited by Blueprints
-	int CurrentPage = 0;
-
-	// Tracks the last page so we don't attempt to go past it
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) 
-	int LastPage = 1;
+	void MenuSetup(TSubclassOf<UChineseRoomLevel> InLevel);
 
 	// Array of the left pages
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -40,6 +33,72 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FString> RightPages{ TEXT("Right page test text") };
 
+#pragma region Contents
+	// Main Bookshelf for the room
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FShelf Shelf;
+
+	// Window corresponding to the current workspace
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FWindow Workspace;
+
+	// Window corresponding to the current focus window
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FWindow FocusWindow;
+
+	// Window corresponding to the desired output
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FWindow DesiredOutput;
+#pragma endregion
+
+#pragma region Tracking variables
+	// Tracks what page we are on, used to get the correct function
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) // Allows the variable to be seen and edited by Blueprints
+	int CurrentPage = 0;
+
+	// Tracks the last page so we don't attempt to go past it
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) 
+	int LastPage = 1;
+
+	// Tracks what book we are on, used to get the correct function
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) // Allows the variable to be seen and edited by Blueprints
+	int CurrentBook = 0;
+
+	// Tracks the last book so we don't attempt to go past it
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int LastBook = 1;
+
+	// Int tracking the x position of the focus window
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int FocusWindowXPosition = 0;
+
+	// Int tracking the y position of the focus window
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int FocusWindowYPosition = 0;
+
+	// Bool tracking when we've solved the message
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsSolved = false;
+#pragma endregion
+
+#pragma region Sizes
+	// Int describing the width of the rules on the pages
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int RuleWidth;
+
+	// Int describing the height of the rules on the pages
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int RuleHeight;
+
+	// Int describing the width of the workspace and desired output
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int WorkspaceWidth;
+
+	// Int describing the height of the workspace and desired output
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int WorkspaceHeight;
+#pragma endregion
+
 protected:
 	// Used to bind the buttons to their functions
 	virtual bool Initialize() override;
@@ -48,11 +107,21 @@ protected:
 	virtual void NativeDestruct() override;
 
 private:
-
+#pragma region Helpers
 	// Helper function to easily set the text of a TextBlock
 	void SetTextBlockText(UTextBlock* InTextBlock, int InInteger);
 	void SetTextBlockText(UTextBlock* InTextBlock, FString InString);
 
+	// Temporary until text blocks are replaced
+	// Helper function to set the text using a window
+	void SetTextBlockEnum(UTextBlock* InTextBlock, FWindow InWindow);
+
+	// Helper to get string from enum, can be overloaded
+	FString GetStringFromEnum(EShapeSpecialCharacter InEnum);
+
+	// Helper function to manage switching books
+	void HandleBookSwitched();
+#pragma endregion
 
 #pragma region Buttons
 	// Pointer to the PrevPageButton, must have the same name
@@ -62,6 +131,14 @@ private:
 	// Pointer to the NextPageButton, must have the same name
 	UPROPERTY(meta = (BindWidget))
 	UButton* NextPageButton;
+
+	// Pointer to the PrevBookButton, must have the same name
+	UPROPERTY(meta = (BindWidget))
+	UButton* PrevBookButton;
+
+	// Pointer to the NextBookButton, must have the same name
+	UPROPERTY(meta = (BindWidget))
+	UButton* NextBookButton;
 
 	// Pointer to the AutoSolveButton, must have the same name
 	UPROPERTY(meta = (BindWidget))
@@ -80,6 +157,14 @@ private:
 	//Function that will be called once the NextPageButton is clicked
 	UFUNCTION()
 	void NextPageButtonClicked();
+
+	//Function that will be called once the PrevBookButton is clicked
+	UFUNCTION()
+	void PrevBookButtonClicked();
+
+	//Function that will be called once the NextBookButton is clicked
+	UFUNCTION()
+	void NextBookButtonClicked();
 
 	//Function that will be called once the AutoSolveButton is clicked
 	UFUNCTION()
@@ -102,6 +187,10 @@ private:
 	// Pointer to the PageNumberText, must have the same name
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* PageNumberText;
+
+	// Pointer to the BookNumberText, must have the same name
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* BookNumberText;
 
 	// Pointer to the WorkspaceText, must have the same name
 	UPROPERTY(meta = (BindWidget))

@@ -8,7 +8,7 @@
 #include "Kismet/KismetTextLibrary.h"
 
 
-void UTheRoomMenu::MenuSetup(int NumberOfPages)
+void UTheRoomMenu::MenuSetup(TSubclassOf<UChineseRoomLevel> InLevel)
 {
 	// Get the world
 	UWorld* World = GetWorld();	
@@ -28,19 +28,32 @@ void UTheRoomMenu::MenuSetup(int NumberOfPages)
 		}
 	}
 
-	LastPage = NumberOfPages - 1; // Sets the number of pages
+	// Set the shelf and windows
+	Shelf = InLevel.GetDefaultObject()->Room.GetDefaultObject()->Shelf;
+	Workspace = InLevel.GetDefaultObject()->StartingWorkspace;
+	FocusWindow = InLevel.GetDefaultObject()->FocusWindow;
+	DesiredOutput = InLevel.GetDefaultObject()->DesiredOutput;
 
-	if (PrevPageButton)
+	// Set the number of books
+	LastBook = Shelf.Books.Num() - 1;
+
+	// Set the workspace
+	SetTextBlockEnum(WorkspaceText, Workspace);
+
+	// Handle "switching" to the first book
+	HandleBookSwitched();
+
+	if (PrevBookButton)
 	{
-		// Disable PrevPageButton since we default to the first page
-		PrevPageButton->SetIsEnabled(false);
+		// On the first book, disable prev book button
+		PrevBookButton->SetIsEnabled(false);
 	}
 
-	// Set the text for the first pages
-	SetTextBlockText(PageNumberText, 0);
-	SetTextBlockText(LeftPageText, LeftPages[0]);
-	SetTextBlockText(RightPageText, FString::Printf(TEXT("Right page test text")));
-	SetTextBlockText(WorkspaceText, FString::Printf(TEXT("Workspace test text")));
+	if (NextBookButton && Shelf.Books.Num() == 1)
+	{
+		// Only 1 book, disable next book button
+		NextBookButton->SetIsEnabled(false);
+	}
 }
 
 bool UTheRoomMenu::Initialize() 
@@ -60,6 +73,16 @@ bool UTheRoomMenu::Initialize()
 	if (NextPageButton)
 	{
 		NextPageButton->OnClicked.AddDynamic(this, &UTheRoomMenu::NextPageButtonClicked);
+	}
+
+	if (PrevBookButton)
+	{
+		PrevBookButton->OnClicked.AddDynamic(this, &UTheRoomMenu::PrevBookButtonClicked);
+	}
+
+	if (NextBookButton)
+	{
+		NextBookButton->OnClicked.AddDynamic(this, &UTheRoomMenu::NextBookButtonClicked);
 	}
 
 	if (AutoSolveButton)
@@ -97,6 +120,81 @@ void UTheRoomMenu::SetTextBlockText(UTextBlock* InTextBlock, FString InString)
 	}
 }
 
+void UTheRoomMenu::SetTextBlockEnum(UTextBlock* InTextBlock, FWindow InWindow)
+{
+	// Text that we will be setting
+	FString TextToSet;
+
+	// Go through each slot of the window
+	for (int i = 0; i < InWindow.Contents.Num(); i++)
+	{
+		for (int j = 0; j < InWindow.Contents[i].Row.Num(); j++)
+		{
+			// Append a string depending on the value of the enum at this slot
+			FString TextToAdd;
+			EShapeSpecialCharacter CurrentShape = InWindow.Contents[i].Row[j];
+			TextToAdd = GetStringFromEnum(CurrentShape);
+			TextToSet += TextToAdd;
+		}
+		// Add a new line
+		TextToSet += TEXT("\n");
+	}
+
+	// Set the end product to the textblock
+	SetTextBlockText(InTextBlock, TextToSet);
+}
+
+FString UTheRoomMenu::GetStringFromEnum(EShapeSpecialCharacter InEnum)
+{
+	// Return a string depending on the value of the enum
+	FString StringToReturn = TEXT("");
+	if (InEnum == EShapeSpecialCharacter::Circle)
+	{
+		StringToReturn = TEXT("C");
+	}
+	else if (InEnum == EShapeSpecialCharacter::Triangle)
+	{
+		StringToReturn = TEXT("T");
+	}
+	else if (InEnum == EShapeSpecialCharacter::Square)
+	{
+		StringToReturn = TEXT("S");
+	}
+	return StringToReturn;
+}
+
+void UTheRoomMenu::HandleBookSwitched() 
+{
+	// If we have at least one book, set the number of pages
+	if (LastBook > 0)
+	{
+		LastPage = Shelf.Books[CurrentBook].Pages.Num() - 1;
+	}
+
+	if (PrevPageButton)
+	{
+		// Disable PrevPageButton since we default to the first page
+		PrevPageButton->SetIsEnabled(false);
+	}
+
+	if (NextPageButton && Shelf.Books.Num() > 0 && Shelf.Books[0].Pages.Num() == 1)
+	{
+		// Disable NextPageButton since there is only one page
+		NextPageButton->SetIsEnabled(false);
+	}
+	else if (NextPageButton && Shelf.Books.Num() > 1 && !(NextPageButton->GetIsEnabled()))
+	{
+		NextPageButton->SetIsEnabled(true);
+	}
+
+	// Set the text for the first pages
+	SetTextBlockText(PageNumberText, 1);
+	SetTextBlockText(BookNumberText, CurrentBook + 1);
+	SetTextBlockEnum(LeftPageText, Shelf.Books[CurrentBook].Pages[CurrentPage].LeftPage);
+	SetTextBlockEnum(RightPageText, Shelf.Books[CurrentBook].Pages[CurrentPage].LeftPage);
+
+}
+
 void UTheRoomMenu::PrevPageButtonClicked()
 {
 	// Check to make sure there are previous pages to go to
@@ -109,27 +207,16 @@ void UTheRoomMenu::PrevPageButtonClicked()
 	CurrentPage -= 1;
 
 	// Make sure we have a page to reference
-	if (LeftPages.Num() > CurrentPage)
+	if (Shelf.Books[CurrentBook].Pages.Num() > CurrentPage)
 	{
 		// Update the text on the pages
-		SetTextBlockText(LeftPageText, LeftPages[CurrentPage]);
+		SetTextBlockEnum(LeftPageText, Shelf.Books[CurrentBook].Pages[CurrentPage].LeftPage);
+		SetTextBlockEnum(RightPageText, Shelf.Books[CurrentBook].Pages[CurrentPage].RightPage);
 	}
 	else
 	{
 		// Otherwise just put blank page
 		SetTextBlockText(LeftPageText, FString::Printf(TEXT("")));
-	}
-
-	// Make sure we have a page to reference
-	if (RightPages.Num() > CurrentPage)
-	{
-		// Update the text on the pages
-		SetTextBlockText(RightPageText, RightPages[CurrentPage]);
-	}
-	else
-	{
-		// Otherwise just put blank page
-		SetTextBlockText(RightPageText, FString::Printf(TEXT("")));
 	}
 	
 	// Update the page number text
@@ -171,27 +258,16 @@ void UTheRoomMenu::NextPageButtonClicked()
 	CurrentPage += 1;
 
 	// Make sure we have a page to reference
-	if (LeftPages.Num() > CurrentPage)
+	if (Shelf.Books[CurrentBook].Pages.Num() > CurrentPage)
 	{
 		// Update the text on the pages
-		SetTextBlockText(LeftPageText, LeftPages[CurrentPage]); 
+		SetTextBlockEnum(LeftPageText, Shelf.Books[CurrentBook].Pages[CurrentPage].LeftPage);
+		SetTextBlockEnum(RightPageText, Shelf.Books[CurrentBook].Pages[CurrentPage].RightPage);
 	}
 	else
 	{
 		// Otherwise just put blank page
 		SetTextBlockText(LeftPageText, FString::Printf(TEXT("")));
-	}
-
-	// Make sure we have a page to reference
-	if (RightPages.Num() > CurrentPage)
-	{
-		// Update the text on the pages
-		SetTextBlockText(RightPageText, RightPages[CurrentPage]);
-	}
-	else
-	{
-		// Otherwise just put blank page
-		SetTextBlockText(RightPageText, FString::Printf(TEXT("")));
 	}
 
 	// Update the page number text
@@ -220,6 +296,84 @@ void UTheRoomMenu::NextPageButtonClicked()
 	}
 }
 
+void UTheRoomMenu::PrevBookButtonClicked()
+{
+	// Check to make sure there are previous books to go to
+	if (CurrentBook <= 0)
+	{
+		return;
+	}
+
+	// Decrement our book counter
+	CurrentBook -= 1;
+
+	// Set our current page back to the beginning: 0
+	CurrentPage = 0;
+
+	if (CurrentBook == 0 && PrevBookButton)
+	{
+		// Disable the PreviousBookButton if we are on the first book
+		PrevBookButton->SetIsEnabled(false);
+	}
+
+	if ((!NextBookButton->GetIsEnabled()) && (CurrentBook < LastBook) && NextBookButton)
+	{
+		// Enable the NextBookButton if we aren't on the last book
+		NextBookButton->SetIsEnabled(true);
+	}
+
+	HandleBookSwitched();
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			1,
+			5.f,
+			FColor::Green,
+			FString::Printf(TEXT("PrevBookClicked"))
+		);
+	}
+}
+
+void UTheRoomMenu::NextBookButtonClicked()
+{
+	// Check to make sure there are more books to go to
+	if (CurrentBook >= LastBook)
+	{
+		return;
+	}
+
+	// Increment our book counter
+	CurrentBook += 1;
+
+	// Set our current page back to the beginning: 0
+	CurrentPage = 0;
+
+	if (CurrentBook == LastBook && NextBookButton)
+	{
+		// Disable the NextPageButton if we are on the last book
+		NextBookButton->SetIsEnabled(false);
+	}
+
+	if ((!PrevBookButton->GetIsEnabled()) && (CurrentBook > 0) && PrevBookButton)
+	{
+		// Enable the PrevPageButton if we aren't on the first book
+		PrevBookButton->SetIsEnabled(true);
+	}
+
+	HandleBookSwitched();
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			1,
+			5.f,
+			FColor::Green,
+			FString::Printf(TEXT("PrevBookClicked"))
+		);
+	}
+}
+
 void UTheRoomMenu::AutoSolveButtonClicked()
 {
 	// Where most of the implementation will be
@@ -236,9 +390,6 @@ void UTheRoomMenu::AutoSolveButtonClicked()
 
 void UTheRoomMenu::QuitButtonClicked()
 {
-	// Quits the game
-	UKismetSystemLibrary::QuitGame(GetWorld(), GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);
-
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(
