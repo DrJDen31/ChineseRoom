@@ -20,12 +20,21 @@ enum class EShapeSpecialCharacter : uint8
 };
 
 USTRUCT(BlueprintType)
-struct FSpecialCharacterColumn
+struct FSpecialCharacterRow
 {
 	GENERATED_USTRUCT_BODY();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<EShapeSpecialCharacter> Row;
+};
+
+USTRUCT(BlueprintType)
+struct FSpecialCharacterImageRow
+{
+	GENERATED_USTRUCT_BODY();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<class UImage*> Row;
 };
 
 USTRUCT(BlueprintType)
@@ -40,7 +49,7 @@ struct FWindow
 	int Height;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<FSpecialCharacterColumn> Contents;
+	TArray<FSpecialCharacterRow> Contents;
 };
 
 USTRUCT(BlueprintType)
@@ -52,7 +61,13 @@ struct FPage
 	FWindow LeftPage;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString LeftRuleText;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FWindow RightPage;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString RightRuleText;
 };
 
 
@@ -64,6 +79,7 @@ struct FBook
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FPage> Pages;
 };
+
 
 USTRUCT(BlueprintType)
 struct FShelf
@@ -82,6 +98,9 @@ class URoom : public UObject
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FShelf Shelf;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString HelpText;
 };
 
 UCLASS(BlueprintType, Blueprintable)

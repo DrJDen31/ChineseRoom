@@ -14,6 +14,7 @@
 // Forward declaring classes
 class UButton;
 class UTextBlock;
+class UImage;
 
 UCLASS()
 class CHINESEROOM_API UTheRoomMenu : public UUserWidget
@@ -49,6 +50,10 @@ public:
 	// Window corresponding to the desired output
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FWindow DesiredOutput;
+
+	// Text to display in the Help Menu
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString HelpMenuText;
 #pragma endregion
 
 #pragma region Tracking variables
@@ -105,6 +110,9 @@ protected:
 
 	// Used to destroy the menu when we are done with it
 	virtual void NativeDestruct() override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetWindowImage(UImage* InImage, EShapeSpecialCharacter Type);
 
 private:
 #pragma region Helpers
@@ -195,5 +203,153 @@ private:
 	// Pointer to the WorkspaceText, must have the same name
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* WorkspaceText;
+#pragma endregion
+
+#pragma region Images
+	// Pointers to all of the images needed
+	// Starts with Left Page, then Right Page, then Workspace
+
+	//------- Left Page --------//
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left00;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left01;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left02;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left03;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left04;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left10;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left11;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left12;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left13;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left14;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left20;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left21;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left22;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left23;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left24;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left30;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left31;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left32;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left33;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Left34;
+
+	//------- Right Page --------//
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right00;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right01;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right02;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right03;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right04;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right10;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right11;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right12;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right13;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right14;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right20;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right21;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right22;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right23;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right24;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right30;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right31;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right32;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right33;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Right34;
+
+#pragma endregion
+
+#pragma region Image Arrays
+	// 2D Arrays holding all of the images needed to access by index
+	TArray<FSpecialCharacterImageRow> LeftPageImages;
+	TArray<FSpecialCharacterImageRow> RightPageImages;
+	TArray<FSpecialCharacterImageRow> WorkspaceImages;
+
+	void SetUpImageArrays();
+	void SetImageArray(TArray<FSpecialCharacterImageRow> InImageArray, FWindow InWindow);
+
+#pragma endregion
+
+#pragma region SpecialCharacters
+	// Variables pointing to the character textures
+	UTexture2D* Circle;
+	UTexture2D* Square;
+	UTexture2D* Triangle;
 #pragma endregion
 };
