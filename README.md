@@ -60,7 +60,7 @@ A Room is a simple data UClass. It contains the unique Shelf for that Room as we
 A Level is another simple data UClass. A Level is a unique problem, and so it contains a Room to give a specific ruleset, and 3 Windows: the StartingWorkspace, the DesiredOutput, and the FocusWindow. 
 - The StartingWorkspace describes the initial conditions of the problem, so the input. The user will look at this and make various changes based on the rules in the ruleset.
 - The DesiredOutput describes the condition that, if achieved, means the user has completed this level. It is unknown to the user, but is compared to after each change the user makes.
-- The FocusWindow is a small portion of the workspace that the user is currently working on. Due to its implementation, it can likely **BE REMOVED FROM THIS CLASS**
+- The FocusWindow is a small portion of the workspace that the user is currently working on. Due to its implementation, it can likely be **SWITCHED TO INITIAL FOCUS WINDOW POSITION**
 
 ### ESolveState (SolveState):
 An enum describing the state of the user's progression for a Level.
@@ -131,8 +131,44 @@ The Save Game System holds an enum that describes the progess of a Level for eac
 ### Button Setup:
 This function is called on Construct and goes through each Level setting the Progress Icon for it and if it is enabled or disabled.
 
-The Room
+The Room - UI and BP
 ------
+### Layout
+
+
+### Help Button
+Creates a simple widget, BP_HelpWidget, that displays the help text for the room this level is a part of.
+
+### Quit Button
+Returns to the main menu by creating a BP_MainMenuWidget and destroying this widget.
+
+### Testing Button
+Will do various things to test new features. Currently simulates the user completing the Level.
+
+### Move Focus Window By
+Called from C++, physically moves the BorderFocusWindow, which is the visual representation of the Focus Window by the amount given.
+
+### Set Window Image
+Called from C++, given a particular UImage* and EShapeSpecialCharacter, sets the to the desired shape.
+
+### On Level Completed
+Called from C++ when the level is completed, simply calls UpdateLevelInfo().
+
+### Update Level Info
+Once a Level is completed, we need to do a few things with the save game. We set the bool *bIsSolved* to true, set the SolveState to Completed, and set the next Level in the Room (if there is one) to NotStarted (so it is no longer locked).
+
+### Set Level Number
+This function is called when the widget is created, around the same place and time as MenuSetup(). It sets the LevelNumber text in the top right to the current level adn updates which level is the current level in the Save Game System.
+
+The Room - Functionality
+------
+Most of the functionality for the whole simulation is in this class.
+### 
+
+
+### Move Focus Window
+g -- with future plans to implement arrow keys
+
 
 Save Game System
 ------
