@@ -162,32 +162,68 @@ This function is called when the widget is created, around the same place and ti
 
 The Room - Variables
 ------
-### Contents
+### Contents:
 
-### Tracking Variables
 
-### Sizes
+### Tracking Variables:
 
-### Bindings to BP
 
-### Image Arrays
+### Sizes:
 
-### Special Characters
+
+### Bindings to BP:
+
+
+### Image Arrays:
+
+
+### Special Characters:
+
 
 The Room - BoilerPlate & MenuSetup()
 ------
+### MenuSetup():
+First, it adds the widget to the user's screen. Then, it initializes values based on the Level passed in. Finally, it sets the widget to its default - disabling certain buttons, setting it to the first page, etc.
+
+### Initialize():
+For each button, binds clicking the button to its OnClicked function
+
+### NativeDestruct():
+Called automatically when the Widget is destroyed, ensures that is is removed from the screen.
 
 The Room - Helpers
 ------
+### SetTextBlockText():
+
+
+### SetTextBlockEnum():
+
+
+### GetStringFromEnum():
+
 
 The Room - Functionality
 ------
 Most of the functionality for the whole simulation is in this class.
-### 
+### HandleBookSwitched():
 
 
-### Move Focus Window:
+### MoveFocusWindowTo():
 Called from the FocusWindow(Direction) Buttons -- with future plans to implement arrow keys.
+
+### MoveFocusWindowUI():
+
+
+### AreWindowsIdentical():
+
+
+### SetWindow():
+
+
+### SetWindowPortion():
+
+
+### CheckLevelCompleted():
 
 The Room - Button Functionality
 ------
