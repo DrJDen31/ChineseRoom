@@ -27,7 +27,7 @@ All C++ content is found under [Source](), with .h files in Public and .cpp file
 
 ChineseRoomTypes
 ------
-This is a header file containing the data structures used in this project. It is included in any class that may need to use these structures. It starts with the structures used for the data and functionality, then at the end are a few structures for the [Save Game System]()
+This is a header file containing the data structures used in this project. It is included in any class that may need to use these structures. It starts with the structures used for the data and functionality, then at the end are a few structures for the [Save Game System](https://github.com/DrJDen31/ChineseRoom/tree/master#save-game-system)
 
 In order of increasing complexity:
 ### EShapeSpecialCharacter (SpecialCharacters):
