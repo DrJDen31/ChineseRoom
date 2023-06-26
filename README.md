@@ -194,13 +194,19 @@ Called automatically when the Widget is destroyed, ensures that is is removed fr
 The Room - Helpers
 ------
 ### SetTextBlockText():
-
+Takes in a UTextBlock* and a string or int, sets the text of the UTextBlock to the input.
 
 ### SetTextBlockEnum():
+Takes in a UTextBlock* and a Window. Goes through each spot in the window, creating a string representative of the SpecialCharacters in the window. Then, it sets the text of the UTextBlock to the representative string.
 
+### SetUpImageArrays()
+Needed in order to make 2D arrays of images. Creates a ImageRow for each row and adds the images in the row to it, then adds all rows to the 2D Image Array *WorkspaceImages*.
+
+### SetImageArray()
+Takes in a Window and a 2D Image Array larger than or equal to the window in size. For each spot in the window, it sets the corresponding spot in the Image Array to the shape stored in the window spot using SetWindowImage(). Centers the window in the Image Array using a integer divide by 2.
 
 ### GetStringFromEnum():
-
+Given a SpecialCharacter, returns a string of length 1 representative of that SpecialCharactier (e.g. Circle -> "C")
 
 The Room - Functionality
 ------
