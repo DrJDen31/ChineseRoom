@@ -15,6 +15,7 @@
 class UButton;
 class UTextBlock;
 class UImage;
+class UBorder;
 
 UCLASS()
 class CHINESEROOM_API UTheRoomMenu : public UUserWidget
@@ -73,13 +74,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int LastBook = 1;
 
-	// Int tracking the x position of the focus window
+	// Int tracking the comlumn position of the focus window
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int FocusWindowXPosition = 0;
+	int FocusWindowColumn = 0;
 
-	// Int tracking the y position of the focus window
+	// Int tracking the row position of the focus window
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int FocusWindowYPosition = 0;
+	int FocusWindowRow = 0;
 
 	// Bool tracking when we've solved the message
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -111,8 +112,17 @@ protected:
 	// Used to destroy the menu when we are done with it
 	virtual void NativeDestruct() override;
 
+	// Sets the image passed in to the shape passed in
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetWindowImage(UImage* InImage, EShapeSpecialCharacter Type);
+
+	// Updates the game state when the level has been completed
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnLevelCompleted();
+
+	// Moves the focus window by the desired offset
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void MoveFocusWindowBy(float X_Offset, float Y_Offset);
 
 private:
 #pragma region Helpers
@@ -126,9 +136,28 @@ private:
 
 	// Helper to get string from enum, can be overloaded
 	FString GetStringFromEnum(EShapeSpecialCharacter InEnum);
+#pragma endregion
 
-	// Helper function to manage switching books
+#pragma region Functionality
+	// Function to manage switching books
 	void HandleBookSwitched();
+
+	// Moves the Focus Window
+	void MoveFocusWindowTo(int Row, int Column);
+
+	void MoveFocusWindowUI(int RowChange, int ColumnChange);
+
+	// Checks if two windows are the same
+	bool AreWindowsIdentical(FWindow* Window1, FWindow* Window2);
+
+	// Sets one window to be identical to the other
+	void SetWindow(FWindow* WindowToChange, FWindow* TemplateWindow);
+
+	// Sets one portion of a bigger window to a smaller one, starting at XOffset, YOffset
+	void SetWindowPortion(FWindow* WindowToChange, FWindow* TemplateWindow, int RowOffset, int ColumnOffset);
+
+	// Checks if the level has been beaten
+	bool CheckLevelCompleted();
 #pragma endregion
 
 #pragma region Buttons
@@ -151,6 +180,22 @@ private:
 	// Pointer to the AutoSolveButton, must have the same name
 	UPROPERTY(meta = (BindWidget))
 	UButton* AutoSolveButton;
+
+	// Pointer to the FocusWindowLeftButton, must have the same name
+	UPROPERTY(meta = (BindWidget))
+	UButton* FocusWindowLeftButton;
+
+	// Pointer to the FocusWindowRightButton, must have the same name
+	UPROPERTY(meta = (BindWidget))
+	UButton* FocusWindowRightButton;
+
+	// Pointer to the FocusWindowUpButton, must have the same name
+	UPROPERTY(meta = (BindWidget))
+	UButton* FocusWindowUpButton;
+
+	// Pointer to the FocusWindowDownButton, must have the same name
+	UPROPERTY(meta = (BindWidget))
+	UButton* FocusWindowDownButton;
 
 	// Pointer to the QuitButton, must have the same name
 	UPROPERTY(meta = (BindWidget))
@@ -178,6 +223,22 @@ private:
 	UFUNCTION()
 	void AutoSolveButtonClicked();
 
+	//Function that will be called once the FocusWindowLeftButton is clicked
+	UFUNCTION()
+	void FocusWindowLeftButtonClicked();
+
+	//Function that will be called once the FocusWindowRightButton is clicked
+	UFUNCTION()
+	void FocusWindowRightButtonClicked();
+
+	//Function that will be called once the FocusWindowUpButton is clicked
+	UFUNCTION()
+	void FocusWindowUpButtonClicked();
+
+	//Function that will be called once the FocusWindowDownButton is clicked
+	UFUNCTION()
+	void FocusWindowDownButtonClicked();
+
 	//Function that will be called once the QuitButton is clicked
 	UFUNCTION()
 	void QuitButtonClicked();
@@ -199,15 +260,11 @@ private:
 	// Pointer to the BookNumberText, must have the same name
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* BookNumberText;
-
-	// Pointer to the WorkspaceText, must have the same name
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* WorkspaceText;
 #pragma endregion
 
 #pragma region Images
 	// Pointers to all of the images needed
-	// Starts with Left Page, then Right Page, then Workspace
+	// Then starts with Left Page, then Right Page, then Workspace
 
 	//------- Left Page --------//
 
@@ -332,6 +389,127 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* Image_Right34;
+
+	//------- Workspace ---------//
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace00;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace01;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace02;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace03;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace04;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace05;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace06;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace07;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace08;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace09;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace10;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace11;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace12;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace13;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace14;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace15;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace16;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace17;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace18;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace19;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace20;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace21;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace22;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace23;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace24;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace25;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace26;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace27;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace28;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace29;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace30;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace31;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace32;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace33;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace34;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace35;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace36;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace37;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace38;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Image_Workspace39;
 
 #pragma endregion
 

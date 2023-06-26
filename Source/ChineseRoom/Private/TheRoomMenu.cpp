@@ -5,6 +5,7 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
+#include "Components/Border.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetTextLibrary.h"
 
@@ -50,8 +51,15 @@ void UTheRoomMenu::MenuSetup(TSubclassOf<UChineseRoomLevel> InLevel)
 	SetUpImageArrays();
 
 	// Set the workspace - eventually switch to image array
-	SetTextBlockEnum(WorkspaceText, Workspace);
+	SetImageArray(WorkspaceImages, Workspace);
 
+	// Moves the focus window to the centered position
+	MoveFocusWindowTo((WorkspaceImages.Num() - Workspace.Contents.Num()) / 2, (WorkspaceImages[0].Row.Num() - Workspace.Contents[0].Row.Num()) / 2);
+	
+	// Reset these to 0 as we updated the default position
+	FocusWindowRow = 0;
+	FocusWindowColumn = 0;
+	
 	// Handle "switching" to the first book
 	HandleBookSwitched();
 
@@ -68,6 +76,7 @@ void UTheRoomMenu::MenuSetup(TSubclassOf<UChineseRoomLevel> InLevel)
 	}
 }
 
+#pragma region boilerplate
 bool UTheRoomMenu::Initialize() 
 {
 	// Calls the super
@@ -102,6 +111,26 @@ bool UTheRoomMenu::Initialize()
 		AutoSolveButton->OnClicked.AddDynamic(this, &UTheRoomMenu::AutoSolveButtonClicked);
 	}
 
+	if (FocusWindowLeftButton)
+	{
+		FocusWindowLeftButton->OnClicked.AddDynamic(this, &UTheRoomMenu::FocusWindowLeftButtonClicked);
+	}
+
+	if (FocusWindowRightButton)
+	{
+		FocusWindowRightButton->OnClicked.AddDynamic(this, &UTheRoomMenu::FocusWindowRightButtonClicked);
+	}
+
+	if (FocusWindowUpButton)
+	{
+		FocusWindowUpButton->OnClicked.AddDynamic(this, &UTheRoomMenu::FocusWindowUpButtonClicked);
+	}
+
+	if (FocusWindowDownButton)
+	{
+		FocusWindowDownButton->OnClicked.AddDynamic(this, &UTheRoomMenu::FocusWindowDownButtonClicked);
+	}
+
 	if (QuitButton)
 	{
 		QuitButton->OnClicked.AddDynamic(this, &UTheRoomMenu::QuitButtonClicked);
@@ -115,7 +144,9 @@ void UTheRoomMenu::NativeDestruct()
 	// Removes it from the player's screen
 	RemoveFromParent();
 }
+#pragma endregion
 
+#pragma region Helpers
 void UTheRoomMenu::SetTextBlockText(UTextBlock* InTextBlock, int InInteger)
 {
 	if (InTextBlock)
@@ -223,6 +254,59 @@ void UTheRoomMenu::SetUpImageArrays()
 	RightPageImageRow3.Row.Add(Image_Right33);
 	RightPageImageRow3.Row.Add(Image_Right34);
 	RightPageImages.Add(RightPageImageRow3);
+
+	// Add the workspace images to the array
+	FSpecialCharacterImageRow WorkspaceImageRow0;
+	WorkspaceImageRow0.Row.Add(Image_Workspace00);
+	WorkspaceImageRow0.Row.Add(Image_Workspace01);
+	WorkspaceImageRow0.Row.Add(Image_Workspace02);
+	WorkspaceImageRow0.Row.Add(Image_Workspace03);
+	WorkspaceImageRow0.Row.Add(Image_Workspace04);
+	WorkspaceImageRow0.Row.Add(Image_Workspace05);
+	WorkspaceImageRow0.Row.Add(Image_Workspace06);
+	WorkspaceImageRow0.Row.Add(Image_Workspace07);
+	WorkspaceImageRow0.Row.Add(Image_Workspace08);
+	WorkspaceImageRow0.Row.Add(Image_Workspace09);
+	WorkspaceImages.Add(WorkspaceImageRow0);
+
+	FSpecialCharacterImageRow WorkspaceImageRow1;
+	WorkspaceImageRow1.Row.Add(Image_Workspace10);
+	WorkspaceImageRow1.Row.Add(Image_Workspace11);
+	WorkspaceImageRow1.Row.Add(Image_Workspace12);
+	WorkspaceImageRow1.Row.Add(Image_Workspace13);
+	WorkspaceImageRow1.Row.Add(Image_Workspace14);
+	WorkspaceImageRow1.Row.Add(Image_Workspace15);
+	WorkspaceImageRow1.Row.Add(Image_Workspace16);
+	WorkspaceImageRow1.Row.Add(Image_Workspace17);
+	WorkspaceImageRow1.Row.Add(Image_Workspace18);
+	WorkspaceImageRow1.Row.Add(Image_Workspace19);
+	WorkspaceImages.Add(WorkspaceImageRow1);
+
+	FSpecialCharacterImageRow WorkspaceImageRow2;
+	WorkspaceImageRow2.Row.Add(Image_Workspace20);
+	WorkspaceImageRow2.Row.Add(Image_Workspace21);
+	WorkspaceImageRow2.Row.Add(Image_Workspace22);
+	WorkspaceImageRow2.Row.Add(Image_Workspace23);
+	WorkspaceImageRow2.Row.Add(Image_Workspace24);
+	WorkspaceImageRow2.Row.Add(Image_Workspace25);
+	WorkspaceImageRow2.Row.Add(Image_Workspace26);
+	WorkspaceImageRow2.Row.Add(Image_Workspace27);
+	WorkspaceImageRow2.Row.Add(Image_Workspace28);
+	WorkspaceImageRow2.Row.Add(Image_Workspace29);
+	WorkspaceImages.Add(WorkspaceImageRow2);
+
+	FSpecialCharacterImageRow WorkspaceImageRow3;
+	WorkspaceImageRow3.Row.Add(Image_Workspace30);
+	WorkspaceImageRow3.Row.Add(Image_Workspace31);
+	WorkspaceImageRow3.Row.Add(Image_Workspace32);
+	WorkspaceImageRow3.Row.Add(Image_Workspace33);
+	WorkspaceImageRow3.Row.Add(Image_Workspace34);
+	WorkspaceImageRow3.Row.Add(Image_Workspace35);
+	WorkspaceImageRow3.Row.Add(Image_Workspace36);
+	WorkspaceImageRow3.Row.Add(Image_Workspace37);
+	WorkspaceImageRow3.Row.Add(Image_Workspace38);
+	WorkspaceImageRow3.Row.Add(Image_Workspace39);
+	WorkspaceImages.Add(WorkspaceImageRow3);
 }
 
 void UTheRoomMenu::SetImageArray(TArray<FSpecialCharacterImageRow> InImageArray, FWindow InWindow)
@@ -236,15 +320,15 @@ void UTheRoomMenu::SetImageArray(TArray<FSpecialCharacterImageRow> InImageArray,
 		Width = InWindow.Contents[0].Row.Num();
 	}
 
-	int HeightOffset = (4 - Height) / 2;
-	int WidthOffset = (5 - Width) / 2;
+	int HeightOffset = (InImageArray.Num() - Height) / 2;
+	int WidthOffset = (InImageArray[0].Row.Num() - Width) / 2;
 
 	for (int i = 0; i < InWindow.Contents.Num(); i++)
 	{
 		for (int j = 0; j < InWindow.Contents[i].Row.Num(); j++)
 		{
 			EShapeSpecialCharacter CurrentShape = InWindow.Contents[i].Row[j];
-			UImage* CurrentImage = InImageArray[i+WidthOffset].Row[j+HeightOffset];
+			UImage* CurrentImage = InImageArray[i + HeightOffset].Row[j + WidthOffset]; // Out of bounds error on the width
 			SetWindowImage(CurrentImage, CurrentShape);
 		}
 	}
@@ -268,7 +352,9 @@ FString UTheRoomMenu::GetStringFromEnum(EShapeSpecialCharacter InEnum)
 	}
 	return StringToReturn;
 }
+#pragma endregion
 
+#pragma region Functionality
 void UTheRoomMenu::HandleBookSwitched() 
 {
 	// If we have at least one book, set the number of pages
@@ -306,6 +392,101 @@ void UTheRoomMenu::HandleBookSwitched()
 	SetTextBlockText(RightPageText, Shelf.Books[CurrentBook].Pages[CurrentPage].RightRuleText);
 }
 
+void UTheRoomMenu::MoveFocusWindowTo(int Row, int Column)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			5.f,
+			FColor::Yellow,
+			FString::Printf(TEXT("Moving to %d, %d"), Column, Row)
+		);
+	}
+	// Check if the position is in range -- check to make indices are correct
+	if (Row < 0 || Row + FocusWindowRow > Workspace.Height || Column < 0 || Column + FocusWindowColumn > Workspace.Width)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				5.f,
+				FColor::Yellow,
+				FString::Printf(TEXT("Out of bounds, Row: %d, Column: %d, FWR: %d, FWC: %d, Height: %d, Width: %d"), Row, Column, FocusWindowRow, FocusWindowColumn, Workspace.Height, Workspace.Width)
+			);
+		}
+		return;
+	}
+
+	// Set RowOffset and ColumnOffset to new - old
+	int RowOffset = Row - FocusWindowRow;
+	int ColumnOffset = Column - FocusWindowColumn;
+
+	// Update focus window position variables
+	FocusWindowRow = Row;
+	FocusWindowColumn = Column;
+
+	// Go through each spot in the focus window and set it to the value
+	// in the corresponding part of the workspace
+	// ****** STILL TO BE IMPLEMENTED *********** //
+
+	MoveFocusWindowUI(RowOffset, ColumnOffset);
+}
+
+void UTheRoomMenu::MoveFocusWindowUI(int RowChange, int ColumnChange)
+{
+	// Temporary fix to move it by the correct amount based on the approximate size of the pictures
+	float TileWidth = 80.0;
+	float TileHeight = 75.0;
+
+	// Call set position of focus window image,
+	// new position = old + (const * change)
+	// where const = width of one grid block
+	// and change is the row or column change passed in
+
+	MoveFocusWindowBy(ColumnChange * TileWidth, RowChange * TileHeight);
+}
+
+bool UTheRoomMenu::AreWindowsIdentical(FWindow* Window1, FWindow* Window2)
+{
+	// Check to see if sizes match
+
+	// Go through each spot in window1 and make sure its identical to the
+	// corresponding spot in window2
+	
+	return true;
+}
+
+void UTheRoomMenu::SetWindow(FWindow* WindowToChange, FWindow* TemplateWindow)
+{
+	// Check to see if sizes match
+
+	// Go through each spot in window to change and set it to the corresponding
+	// spot in the template window
+}
+
+void UTheRoomMenu::SetWindowPortion(FWindow* WindowToChange, FWindow* TemplateWindow, int RowOffset, int ColumnOffset)
+{
+	// Make sure the template + the offset is still in range
+
+	// Go through each spot in the template and set the corresponding part in window to change
+	// + the offset to the new value
+}
+
+bool UTheRoomMenu::CheckLevelCompleted()
+{
+	// Check to see if the Workspace == Desired Output and any other necessary 
+	// conditions to complete the level
+
+	// If so, call OnLevelCompleted();
+	// and return true;
+
+	// If not,
+	return false;
+}
+#pragma endregion
+
+#pragma region Button Functionality
 void UTheRoomMenu::PrevPageButtonClicked()
 {
 	// Check to make sure there are previous pages to go to
@@ -515,6 +696,75 @@ void UTheRoomMenu::AutoSolveButtonClicked()
 	}
 }
 
+void UTheRoomMenu::FocusWindowLeftButtonClicked()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			5.f,
+			FColor::Yellow,
+			FString::Printf(TEXT("Left"))
+		);
+	}
+	if (FocusWindowColumn > 0)
+	{
+		MoveFocusWindowTo(FocusWindowRow, FocusWindowColumn - 1);
+	}
+}
+
+void UTheRoomMenu::FocusWindowRightButtonClicked()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			5.f,
+			FColor::Yellow,
+			FString::Printf(TEXT("Right"))
+		);
+	}
+	if (FocusWindowColumn + FocusWindow.Width < Workspace.Width)
+	{
+		MoveFocusWindowTo(FocusWindowRow, FocusWindowColumn + 1);
+	}
+}
+
+void UTheRoomMenu::FocusWindowUpButtonClicked()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			5.f,
+			FColor::Yellow,
+			FString::Printf(TEXT("Up"))
+		);
+	}
+	if (FocusWindowRow > 0)
+	{
+		MoveFocusWindowTo(FocusWindowRow - 1, FocusWindowColumn);
+	}
+}
+
+void UTheRoomMenu::FocusWindowDownButtonClicked()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			5.f,
+			FColor::Yellow,
+			FString::Printf(TEXT("Down"))
+		);
+	}
+
+	if (FocusWindowRow + FocusWindow.Height < Workspace.Height)
+	{
+		MoveFocusWindowTo(FocusWindowRow + 1, FocusWindowColumn);
+	}
+}
+
 void UTheRoomMenu::QuitButtonClicked()
 {
 	if (GEngine)
@@ -527,3 +777,4 @@ void UTheRoomMenu::QuitButtonClicked()
 		);
 	}
 }
+#pragma endregion

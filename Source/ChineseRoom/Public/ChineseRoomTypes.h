@@ -129,6 +129,7 @@ enum class ESolveState : uint8
 	Locked UMETA(DisplayName = "Locked"),
 	NotStarted UMETA(DisplayName = "NotStarted"),
 	InProgress UMETA(DisplayName = "InProgress"),
+	Current UMETA(DisplayName = "Current"),
 	Solved UMETA(DisplayName = "Solved"),
 };
 
