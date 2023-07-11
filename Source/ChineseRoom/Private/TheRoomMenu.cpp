@@ -350,6 +350,10 @@ FString UTheRoomMenu::GetStringFromEnum(EShapeSpecialCharacter InEnum)
 	{
 		StringToReturn = TEXT("S");
 	}
+  else if (InEnum == EShapeSpecialCharacter::Star)
+	{
+		StringToReturn = TEXT("R");
+	}
 	return StringToReturn;
 }
 #pragma endregion
