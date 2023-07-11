@@ -17,6 +17,7 @@ enum class EShapeSpecialCharacter : uint8
 	Circle UMETA(DisplayName = "Circle"),
 	Triangle UMETA(DisplayName = "Triangle"),
 	Square UMETA(DisplayName = "Square"),
+  Star UMETA(DisplayName = "Star"),
 };
 
 USTRUCT(BlueprintType)

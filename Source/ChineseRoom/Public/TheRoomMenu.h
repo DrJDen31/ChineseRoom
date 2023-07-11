@@ -351,5 +351,6 @@ private:
 	UTexture2D* Circle;
 	UTexture2D* Square;
 	UTexture2D* Triangle;
+  UTexture2D* Star;
 #pragma endregion
 };
