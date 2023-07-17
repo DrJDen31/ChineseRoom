@@ -437,7 +437,6 @@ void UTheRoomMenu::MoveFocusWindowTo(int Row, int Column)
 
 	// Go through each spot in the focus window and set it to the value
 	// in the corresponding part of the workspace
-	// ****** STILL TO BE IMPLEMENTED *********** //
 	for (int i = 0; i < FocusWindow.Contents.Num(); i++)
 	{
 		for (int j = 0; j < FocusWindow.Contents[i].Row.Num(); j++)
