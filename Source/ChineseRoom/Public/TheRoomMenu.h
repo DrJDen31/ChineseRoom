@@ -157,6 +157,7 @@ private:
 	void SetWindowPortion(FWindow* WindowToChange, FWindow* TemplateWindow, int RowOffset, int ColumnOffset);
 
 	// Checks if the level has been beaten
+	UFUNCTION(BlueprintCallable)
 	bool CheckLevelCompleted();
 #pragma endregion
 
