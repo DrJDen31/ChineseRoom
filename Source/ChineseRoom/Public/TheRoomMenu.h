@@ -124,7 +124,7 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void MoveFocusWindowBy(float X_Offset, float Y_Offset);
 
-private:
+protected:
 #pragma region Helpers
 	// Helper function to easily set the text of a TextBlock
 	void SetTextBlockText(UTextBlock* InTextBlock, int InInteger);
@@ -148,7 +148,7 @@ private:
 	void MoveFocusWindowUI(int RowChange, int ColumnChange);
 
 	// Checks if two windows are the same
-	bool AreWindowsIdentical(FWindow* Window1, FWindow* Window2);
+	virtual bool AreWindowsIdentical(FWindow* Window1, FWindow* Window2);
 
 	// Sets one window to be identical to the other
 	void SetWindow(FWindow* WindowToChange, FWindow* TemplateWindow);
@@ -222,7 +222,7 @@ private:
 
 	//Function that will be called once the AutoSolveButton is clicked
 	UFUNCTION()
-	void AutoSolveButtonClicked();
+	virtual void AutoSolveButtonClicked();
 
 	//Function that will be called once the FocusWindowLeftButton is clicked
 	UFUNCTION()
@@ -263,6 +263,7 @@ private:
 	UTextBlock* BookNumberText;
 #pragma endregion
 
+	/*
 #pragma region Images
 	// Pointers to all of the images needed
 	// Then starts with Left Page, then Right Page, then Workspace
@@ -513,6 +514,9 @@ private:
 	UImage* Image_Workspace39;
 
 #pragma endregion
+*/
+
+protected:
 
 #pragma region Image Arrays
 	// 2D Arrays holding all of the images needed to access by index
@@ -520,8 +524,8 @@ private:
 	TArray<FSpecialCharacterImageRow> RightPageImages;
 	TArray<FSpecialCharacterImageRow> WorkspaceImages;
 
-	void SetUpImageArrays();
-	void SetImageArray(TArray<FSpecialCharacterImageRow> InImageArray, FWindow InWindow);
+	virtual void SetUpImageArrays();
+	virtual void SetImageArray(TArray<FSpecialCharacterImageRow> InImageArray, FWindow InWindow);
 
 #pragma endregion
 
@@ -530,6 +534,8 @@ private:
 	UTexture2D* Circle;
 	UTexture2D* Square;
 	UTexture2D* Triangle;
-  UTexture2D* Star;
+	UTexture2D* Star;
 #pragma endregion
 };
+
+

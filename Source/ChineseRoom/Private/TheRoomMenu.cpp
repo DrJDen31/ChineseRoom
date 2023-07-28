@@ -59,7 +59,7 @@ void UTheRoomMenu::MenuSetup(TSubclassOf<UChineseRoomLevel> InLevel)
 	// Visually move the focus window to the starting position
 	float TileWidth = 80.0;
 	float TileHeight = 75.0;
-	MoveFocusWindowBy((WorkspaceImages[0].Row.Num() - Workspace.Contents[0].Row.Num()) / 2 * TileWidth, (WorkspaceImages.Num() - Workspace.Contents.Num()) / 2 * TileHeight);
+	//MoveFocusWindowBy((WorkspaceImages[0].Row.Num() - Workspace.Contents[0].Row.Num()) / 2 * TileWidth, (WorkspaceImages.Num() - Workspace.Contents.Num()) / 2 * TileHeight);
 	
 	// Reset these to 0 as we updated the default position
 	FocusWindowRow = 0;
@@ -194,6 +194,7 @@ void UTheRoomMenu::SetTextBlockEnum(UTextBlock* InTextBlock, FWindow InWindow)
 
 void UTheRoomMenu::SetUpImageArrays()
 {
+	/*
 	// Add the left page images to the array
 	FSpecialCharacterImageRow LeftPageImageRow0;
 	LeftPageImageRow0.Row.Add(Image_Left00);
@@ -312,6 +313,7 @@ void UTheRoomMenu::SetUpImageArrays()
 	WorkspaceImageRow3.Row.Add(Image_Workspace38);
 	WorkspaceImageRow3.Row.Add(Image_Workspace39);
 	WorkspaceImages.Add(WorkspaceImageRow3);
+	*/
 }
 
 void UTheRoomMenu::SetImageArray(TArray<FSpecialCharacterImageRow> InImageArray, FWindow InWindow)
@@ -326,14 +328,14 @@ void UTheRoomMenu::SetImageArray(TArray<FSpecialCharacterImageRow> InImageArray,
 	}
 
 	int HeightOffset = (InImageArray.Num() - Height) / 2;
-	int WidthOffset = (InImageArray[0].Row.Num() - Width) / 2;
+	int WidthOffset = (InImageArray[0].Row.Num() - Width) / 2; // Issue
 
 	for (int i = 0; i < InWindow.Contents.Num(); i++)
 	{
 		for (int j = 0; j < InWindow.Contents[i].Row.Num(); j++)
 		{
 			EShapeSpecialCharacter CurrentShape = InWindow.Contents[i].Row[j];
-			UImage* CurrentImage = InImageArray[i + HeightOffset].Row[j + WidthOffset]; // Out of bounds error on the width
+			UImage* CurrentImage = InImageArray[i + HeightOffset].Row[j + WidthOffset];
 			SetWindowImage(CurrentImage, CurrentShape);
 		}
 	}
