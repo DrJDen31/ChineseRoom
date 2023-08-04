@@ -14,6 +14,8 @@ class CHINESEROOM_API ULinearAdditionRoom : public UTheRoomMenu
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void MenuSetup(TSubclassOf<UChineseRoomLevel> InLevel) override;
 
 protected:
 	virtual void SetUpImageArrays() override;
@@ -28,6 +30,23 @@ protected:
 	void ApplyRule(int Rule);
 
 	void ShiftWorkspace();
+
+	//Function that will be called once the PrevPageButton is clicked
+	virtual void PrevPageButtonClicked() override;
+
+	//Function that will be called once the NextPageButton is clicked
+	virtual void NextPageButtonClicked() override;
+
+	//Function that will be called once the PrevBookButton is clicked
+	virtual void PrevBookButtonClicked() override;
+
+	//Function that will be called once the NextBookButton is clicked
+	virtual void NextBookButtonClicked() override;
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void RuleHasOptions(bool Options);
+
+	bool DoesRuleHaveOptions();
 
 	//------- Left Page --------//
 	UPROPERTY(meta = (BindWidget))

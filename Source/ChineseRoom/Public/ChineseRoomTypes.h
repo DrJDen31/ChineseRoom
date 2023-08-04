@@ -14,10 +14,12 @@ UENUM(BlueprintType)
 enum class EShapeSpecialCharacter : uint8
 {
 	None UMETA(DisplayName = "None"),
+	Blank UMETA(DisplayName = "Blank"),
+	DontCare UMETA(DisplayName = "DontCare"),
 	Circle UMETA(DisplayName = "Circle"),
 	Triangle UMETA(DisplayName = "Triangle"),
 	Square UMETA(DisplayName = "Square"),
-  Star UMETA(DisplayName = "Star"),
+	Star UMETA(DisplayName = "Star"),
 };
 
 USTRUCT(BlueprintType)
@@ -53,6 +55,15 @@ struct FWindow
 	TArray<FSpecialCharacterRow> Contents;
 };
 
+UENUM(BlueprintType)
+enum class ESpecialRule : uint8
+{
+	None UMETA(DisplayName = "None"),
+	NextBook UMETA(DisplayName = "NextBook"),
+	PrevBook UMETA(DisplayName = "PrevBook"),
+	FocusWindowReachedEnd UMETA(DisplayName = "FocusWindowReachedEnd"),
+};
+
 USTRUCT(BlueprintType)
 struct FPage
 {
@@ -69,6 +80,9 @@ struct FPage
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString RightRuleText;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	ESpecialRule SpecialRule;
 };
 
 

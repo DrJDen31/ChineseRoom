@@ -50,15 +50,13 @@ void UTheRoomMenu::MenuSetup(TSubclassOf<UChineseRoomLevel> InLevel)
 	// Initialize Arrays
 	SetUpImageArrays();
 
-	// Set the workspace - eventually switch to image array
+	// Set the workspace
 	SetImageArray(WorkspaceImages, Workspace);
 
 	// Moves the focus window to the centered position
 	MoveFocusWindowTo(0, 0);
 
 	// Visually move the focus window to the starting position
-	float TileWidth = 80.0;
-	float TileHeight = 75.0;
 	//MoveFocusWindowBy((WorkspaceImages[0].Row.Num() - Workspace.Contents[0].Row.Num()) / 2 * TileWidth, (WorkspaceImages.Num() - Workspace.Contents.Num()) / 2 * TileHeight);
 	
 	// Reset these to 0 as we updated the default position
@@ -327,6 +325,8 @@ void UTheRoomMenu::SetImageArray(TArray<FSpecialCharacterImageRow> InImageArray,
 		Width = InWindow.Contents[0].Row.Num();
 	}
 
+	FMath::Min(InImageArray.Num(), InImageArray.Num());
+
 	int HeightOffset = (InImageArray.Num() - Height) / 2;
 	int WidthOffset = (InImageArray[0].Row.Num() - Width) / 2; // Issue
 
@@ -463,10 +463,6 @@ void UTheRoomMenu::MoveFocusWindowTo(int Row, int Column)
 
 void UTheRoomMenu::MoveFocusWindowUI(int RowChange, int ColumnChange)
 {
-	// Temporary fix to move it by the correct amount based on the approximate size of the pictures
-	float TileWidth = 80.0;
-	float TileHeight = 75.0;
-
 	// Call set position of focus window image,
 	// new position = old + (const * change)
 	// where const = width of one grid block

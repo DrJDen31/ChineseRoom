@@ -25,7 +25,7 @@ class CHINESEROOM_API UTheRoomMenu : public UUserWidget
 public:
 	// Adds the menu to the player's screen and changes the input mode to UI
 	UFUNCTION(BlueprintCallable) // Allows the function to be called by Blueprints
-	void MenuSetup(TSubclassOf<UChineseRoomLevel> InLevel);
+	virtual void MenuSetup(TSubclassOf<UChineseRoomLevel> InLevel);
 
 	// Array of the left pages
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -206,19 +206,19 @@ protected:
 #pragma region Button OnClicked Functions
 	//Function that will be called once the PrevPageButton is clicked
 	UFUNCTION()
-	void PrevPageButtonClicked();
+	virtual void PrevPageButtonClicked();
 
 	//Function that will be called once the NextPageButton is clicked
 	UFUNCTION()
-	void NextPageButtonClicked();
+	virtual void NextPageButtonClicked();
 
 	//Function that will be called once the PrevBookButton is clicked
 	UFUNCTION()
-	void PrevBookButtonClicked();
+	virtual void PrevBookButtonClicked();
 
 	//Function that will be called once the NextBookButton is clicked
 	UFUNCTION()
-	void NextBookButtonClicked();
+	virtual void NextBookButtonClicked();
 
 	//Function that will be called once the AutoSolveButton is clicked
 	UFUNCTION()
@@ -523,6 +523,9 @@ protected:
 	TArray<FSpecialCharacterImageRow> LeftPageImages;
 	TArray<FSpecialCharacterImageRow> RightPageImages;
 	TArray<FSpecialCharacterImageRow> WorkspaceImages;
+
+	float TileWidth = 80.0;
+	float TileHeight = 75.0;
 
 	virtual void SetUpImageArrays();
 	virtual void SetImageArray(TArray<FSpecialCharacterImageRow> InImageArray, FWindow InWindow);

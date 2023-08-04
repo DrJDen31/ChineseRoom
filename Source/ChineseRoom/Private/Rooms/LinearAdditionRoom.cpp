@@ -3,6 +3,14 @@
 
 #include "Rooms/LinearAdditionRoom.h"
 
+void ULinearAdditionRoom::MenuSetup(TSubclassOf<UChineseRoomLevel> InLevel)
+{
+	Super::MenuSetup(InLevel);
+	TileWidth = 160.0;
+	TileHeight = 150.0;
+	RuleHasOptions(DoesRuleHaveOptions());
+}
+
 void ULinearAdditionRoom::SetUpImageArrays()
 {
 	// Add the left page images to the array
@@ -39,13 +47,25 @@ void ULinearAdditionRoom::SetUpImageArrays()
 
 void ULinearAdditionRoom::SetImageArray(TArray<FSpecialCharacterImageRow> InImageArray, FWindow InWindow)
 {
+	if (InWindow.Contents[0].Row.Num() > InImageArray[0].Row.Num())
+	{
+		FWindow CroppedWindow; 
+		FSpecialCharacterRow CroppedRow;
+		for (int i = 0; i < InImageArray[0].Row.Num(); i++)
+		{
+			CroppedRow.Row.Add(InWindow.Contents[0].Row[i]);
+		}
+		CroppedWindow.Contents.Add(CroppedRow);
+		Super::SetImageArray(InImageArray, CroppedWindow);
+		return;
+	}
 	Super::SetImageArray(InImageArray, InWindow);
 }
 
 int ULinearAdditionRoom::DoesRuleApply()
 {
 	bool Applies = true;
-	for (int i = 0; i < FocusWindow.Contents[0].Row.Num(); i++)
+	for (int i = 0; i < 2; i++)
 	{
 		if (FocusWindow.Contents[0].Row[i] != Shelf.Books[CurrentBook].Pages[CurrentPage].LeftPage.Contents[0].Row[i])
 		{
@@ -58,9 +78,14 @@ int ULinearAdditionRoom::DoesRuleApply()
 		return 1;
 	}
 
-	for (int i = 0; i < FocusWindow.Contents[0].Row.Num(); i++)
+	if (Shelf.Books[CurrentBook].Pages[CurrentPage].LeftPage.Contents.Num() == 1)
 	{
-		if (FocusWindow.Contents[0].Row[i] != Shelf.Books[CurrentBook].Pages[CurrentPage].LeftPage.Contents[1].Row[i])
+		return 0;
+	}
+	Applies = true;
+	for (int j = 0; j < 2; j++)
+	{
+		if (FocusWindow.Contents[0].Row[j] != Shelf.Books[CurrentBook].Pages[CurrentPage].LeftPage.Contents[1].Row[j])
 		{
 			Applies = false;
 		}
@@ -70,18 +95,24 @@ int ULinearAdditionRoom::DoesRuleApply()
 	{
 		return 2;
 	}
-	
+
 	return 0;
 }
 
 void ULinearAdditionRoom::ApplyRule(int Rule)
 {
-
+	Workspace.Contents[0].Row[FocusWindowColumn] = Shelf.Books[CurrentBook].Pages[CurrentPage].RightPage.Contents[0].Row[0];
 }
 
 void ULinearAdditionRoom::ShiftWorkspace()
 {
+	for (int i = FocusWindowColumn + 1; i < Workspace.Contents[0].Row.Num() - 1; i++) 
+	{
+		Workspace.Contents[0].Row[i] = Workspace.Contents[0].Row[i + 1];
+	}
 
+	Workspace.Contents[0].Row[Workspace.Contents[0].Row.Num() - 1] = EShapeSpecialCharacter::Blank;
+	SetImageArray(WorkspaceImages, Workspace);
 }
 
 void ULinearAdditionRoom::AutoSolveButtonClicked()
@@ -96,6 +127,16 @@ void ULinearAdditionRoom::AutoSolveButtonClicked()
 			FString::Printf(TEXT("AutoSolveClicked"))
 		);
 	}
+
+	if (Shelf.Books[CurrentBook].Pages[CurrentPage].SpecialRule == ESpecialRule::FocusWindowReachedEnd) 
+	{
+		if (FocusWindow.Contents[0].Row[1] == EShapeSpecialCharacter::Blank)
+		{
+			OnLevelCompleted();
+		}
+		return;
+	}
+
 	int Check = DoesRuleApply();
 	if (Check > 0)
 	{
@@ -110,7 +151,24 @@ void ULinearAdditionRoom::AutoSolveButtonClicked()
 		}
 		ApplyRule(Check);
 		ShiftWorkspace();
-		MoveFocusWindowTo(FocusWindowRow, FocusWindowColumn);
+		MoveFocusWindowTo(FocusWindowRow, FocusWindowColumn + 1);
+
+		if (Shelf.Books[CurrentBook].Pages[CurrentPage].SpecialRule == ESpecialRule::NextBook) 
+		{
+			NextBookButtonClicked();
+		}
+		else if (Shelf.Books[CurrentBook].Pages[CurrentPage].SpecialRule == ESpecialRule::PrevBook)
+		{
+			PrevBookButtonClicked();
+		}
+
+		// AutoSolve
+		/*
+		if (FocusWindow.Contents[0].Row[0] == EShapeSpecialCharacter::Blank && FocusWindow.Contents[0].Row[1] == EShapeSpecialCharacter::Blank)
+		{
+			OnLevelCompleted();
+		}
+		*/
 	}
 	else
 	{
@@ -124,4 +182,36 @@ void ULinearAdditionRoom::AutoSolveButtonClicked()
 			);
 		}
 	}
+}
+
+
+bool ULinearAdditionRoom::DoesRuleHaveOptions()
+{
+	return (Shelf.Books[CurrentBook].Pages[CurrentPage].LeftPage.Contents.Num() > 1)
+		&& (Shelf.Books[CurrentBook].Pages[CurrentPage].LeftPage.Contents[1].Row[0] != EShapeSpecialCharacter::None)
+		&& (Shelf.Books[CurrentBook].Pages[CurrentPage].LeftPage.Contents[1].Row[1] != EShapeSpecialCharacter::None);
+}
+
+void ULinearAdditionRoom::PrevPageButtonClicked()
+{
+	Super::PrevPageButtonClicked();
+	RuleHasOptions(DoesRuleHaveOptions());
+}
+
+void ULinearAdditionRoom::NextPageButtonClicked()
+{
+	Super::NextPageButtonClicked();
+	RuleHasOptions(DoesRuleHaveOptions());
+}
+
+void ULinearAdditionRoom::PrevBookButtonClicked()
+{
+	Super::PrevBookButtonClicked();
+	RuleHasOptions(DoesRuleHaveOptions());
+}
+
+void ULinearAdditionRoom::NextBookButtonClicked()
+{
+	Super::NextBookButtonClicked();
+	RuleHasOptions(DoesRuleHaveOptions());
 }
