@@ -162,3 +162,13 @@ struct FLevelSave
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int LevelNumber;
 };
+
+
+USTRUCT(BlueprintType)
+struct FFilingCabinet
+{
+	GENERATED_USTRUCT_BODY();
+
+
+
+};
