@@ -190,129 +190,7 @@ void UTheRoomMenu::SetTextBlockEnum(UTextBlock* InTextBlock, FWindow InWindow)
 	SetTextBlockText(InTextBlock, TextToSet);
 }
 
-void UTheRoomMenu::SetUpImageArrays()
-{
-	/*
-	// Add the left page images to the array
-	FSpecialCharacterImageRow LeftPageImageRow0;
-	LeftPageImageRow0.Row.Add(Image_Left00);
-	LeftPageImageRow0.Row.Add(Image_Left01);
-	LeftPageImageRow0.Row.Add(Image_Left02);
-	LeftPageImageRow0.Row.Add(Image_Left03);
-	LeftPageImageRow0.Row.Add(Image_Left04);
-	LeftPageImages.Add(LeftPageImageRow0);
-
-	FSpecialCharacterImageRow LeftPageImageRow1;
-	LeftPageImageRow1.Row.Add(Image_Left10);
-	LeftPageImageRow1.Row.Add(Image_Left11);
-	LeftPageImageRow1.Row.Add(Image_Left12);
-	LeftPageImageRow1.Row.Add(Image_Left13);
-	LeftPageImageRow1.Row.Add(Image_Left14);
-	LeftPageImages.Add(LeftPageImageRow1);
-
-	FSpecialCharacterImageRow LeftPageImageRow2;
-	LeftPageImageRow2.Row.Add(Image_Left20);
-	LeftPageImageRow2.Row.Add(Image_Left21);
-	LeftPageImageRow2.Row.Add(Image_Left22);
-	LeftPageImageRow2.Row.Add(Image_Left23);
-	LeftPageImageRow2.Row.Add(Image_Left24);
-	LeftPageImages.Add(LeftPageImageRow2);
-
-	FSpecialCharacterImageRow LeftPageImageRow3;
-	LeftPageImageRow3.Row.Add(Image_Left30);
-	LeftPageImageRow3.Row.Add(Image_Left31);
-	LeftPageImageRow3.Row.Add(Image_Left32);
-	LeftPageImageRow3.Row.Add(Image_Left33);
-	LeftPageImageRow3.Row.Add(Image_Left34);
-	LeftPageImages.Add(LeftPageImageRow3);
-
-	// Add the right page images to the array
-	FSpecialCharacterImageRow RightPageImageRow0;
-	RightPageImageRow0.Row.Add(Image_Right00);
-	RightPageImageRow0.Row.Add(Image_Right01);
-	RightPageImageRow0.Row.Add(Image_Right02);
-	RightPageImageRow0.Row.Add(Image_Right03);
-	RightPageImageRow0.Row.Add(Image_Right04);
-	RightPageImages.Add(RightPageImageRow0);
-
-	FSpecialCharacterImageRow RightPageImageRow1;
-	RightPageImageRow1.Row.Add(Image_Right10);
-	RightPageImageRow1.Row.Add(Image_Right11);
-	RightPageImageRow1.Row.Add(Image_Right12);
-	RightPageImageRow1.Row.Add(Image_Right13);
-	RightPageImageRow1.Row.Add(Image_Right14);
-	RightPageImages.Add(RightPageImageRow1);
-
-	FSpecialCharacterImageRow RightPageImageRow2;
-	RightPageImageRow2.Row.Add(Image_Right20);
-	RightPageImageRow2.Row.Add(Image_Right21);
-	RightPageImageRow2.Row.Add(Image_Right22);
-	RightPageImageRow2.Row.Add(Image_Right23);
-	RightPageImageRow2.Row.Add(Image_Right24);
-	RightPageImages.Add(RightPageImageRow2);
-
-	FSpecialCharacterImageRow RightPageImageRow3;
-	RightPageImageRow3.Row.Add(Image_Right30);
-	RightPageImageRow3.Row.Add(Image_Right31);
-	RightPageImageRow3.Row.Add(Image_Right32);
-	RightPageImageRow3.Row.Add(Image_Right33);
-	RightPageImageRow3.Row.Add(Image_Right34);
-	RightPageImages.Add(RightPageImageRow3);
-
-	// Add the workspace images to the array
-	FSpecialCharacterImageRow WorkspaceImageRow0;
-	WorkspaceImageRow0.Row.Add(Image_Workspace00);
-	WorkspaceImageRow0.Row.Add(Image_Workspace01);
-	WorkspaceImageRow0.Row.Add(Image_Workspace02);
-	WorkspaceImageRow0.Row.Add(Image_Workspace03);
-	WorkspaceImageRow0.Row.Add(Image_Workspace04);
-	WorkspaceImageRow0.Row.Add(Image_Workspace05);
-	WorkspaceImageRow0.Row.Add(Image_Workspace06);
-	WorkspaceImageRow0.Row.Add(Image_Workspace07);
-	WorkspaceImageRow0.Row.Add(Image_Workspace08);
-	WorkspaceImageRow0.Row.Add(Image_Workspace09);
-	WorkspaceImages.Add(WorkspaceImageRow0);
-
-	FSpecialCharacterImageRow WorkspaceImageRow1;
-	WorkspaceImageRow1.Row.Add(Image_Workspace10);
-	WorkspaceImageRow1.Row.Add(Image_Workspace11);
-	WorkspaceImageRow1.Row.Add(Image_Workspace12);
-	WorkspaceImageRow1.Row.Add(Image_Workspace13);
-	WorkspaceImageRow1.Row.Add(Image_Workspace14);
-	WorkspaceImageRow1.Row.Add(Image_Workspace15);
-	WorkspaceImageRow1.Row.Add(Image_Workspace16);
-	WorkspaceImageRow1.Row.Add(Image_Workspace17);
-	WorkspaceImageRow1.Row.Add(Image_Workspace18);
-	WorkspaceImageRow1.Row.Add(Image_Workspace19);
-	WorkspaceImages.Add(WorkspaceImageRow1);
-
-	FSpecialCharacterImageRow WorkspaceImageRow2;
-	WorkspaceImageRow2.Row.Add(Image_Workspace20);
-	WorkspaceImageRow2.Row.Add(Image_Workspace21);
-	WorkspaceImageRow2.Row.Add(Image_Workspace22);
-	WorkspaceImageRow2.Row.Add(Image_Workspace23);
-	WorkspaceImageRow2.Row.Add(Image_Workspace24);
-	WorkspaceImageRow2.Row.Add(Image_Workspace25);
-	WorkspaceImageRow2.Row.Add(Image_Workspace26);
-	WorkspaceImageRow2.Row.Add(Image_Workspace27);
-	WorkspaceImageRow2.Row.Add(Image_Workspace28);
-	WorkspaceImageRow2.Row.Add(Image_Workspace29);
-	WorkspaceImages.Add(WorkspaceImageRow2);
-
-	FSpecialCharacterImageRow WorkspaceImageRow3;
-	WorkspaceImageRow3.Row.Add(Image_Workspace30);
-	WorkspaceImageRow3.Row.Add(Image_Workspace31);
-	WorkspaceImageRow3.Row.Add(Image_Workspace32);
-	WorkspaceImageRow3.Row.Add(Image_Workspace33);
-	WorkspaceImageRow3.Row.Add(Image_Workspace34);
-	WorkspaceImageRow3.Row.Add(Image_Workspace35);
-	WorkspaceImageRow3.Row.Add(Image_Workspace36);
-	WorkspaceImageRow3.Row.Add(Image_Workspace37);
-	WorkspaceImageRow3.Row.Add(Image_Workspace38);
-	WorkspaceImageRow3.Row.Add(Image_Workspace39);
-	WorkspaceImages.Add(WorkspaceImageRow3);
-	*/
-}
+void UTheRoomMenu::SetUpImageArrays(){}
 
 void UTheRoomMenu::SetImageArray(TArray<FSpecialCharacterImageRow> InImageArray, FWindow InWindow)
 {
@@ -369,7 +247,7 @@ FString UTheRoomMenu::GetStringFromEnum(EShapeSpecialCharacter InEnum)
 void UTheRoomMenu::HandleBookSwitched() 
 {
 	// If we have at least one book, set the number of pages
-	if (LastBook > 0)
+	if (LastBook >= 0)
 	{
 		LastPage = Shelf.Books[CurrentBook].Pages.Num() - 1;
 	}
