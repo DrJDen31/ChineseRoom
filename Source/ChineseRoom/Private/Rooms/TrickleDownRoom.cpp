@@ -8,7 +8,10 @@ void UTrickleDownRoom::MenuSetup(TSubclassOf<UChineseRoomLevel> InLevel)
 {
 	Super::MenuSetup(InLevel);
 	TileWidth = 170.0;
-	TileHeight = 170.0;
+	TileHeight = 165.0;
+
+	// Visually move the focus window to the starting position
+	MoveFocusWindowBy((WorkspaceImages[0].Row.Num() - Workspace.Contents[0].Row.Num()) / 2 * TileWidth, (WorkspaceImages.Num() - Workspace.Contents.Num()) / 2 * TileHeight);
 }
 
 void UTrickleDownRoom::SetUpImageArrays()
