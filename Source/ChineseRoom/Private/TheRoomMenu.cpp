@@ -203,10 +203,8 @@ void UTheRoomMenu::SetImageArray(TArray<FSpecialCharacterImageRow> InImageArray,
 		Width = InWindow.Contents[0].Row.Num();
 	}
 
-	FMath::Min(InImageArray.Num(), InImageArray.Num());
-
-	int HeightOffset = (InImageArray.Num() - Height) / 2;
-	int WidthOffset = (InImageArray[0].Row.Num() - Width) / 2; // Issue
+	int HeightOffset = FMath::Clamp((InImageArray.Num() - Height) / 2, 0, 5);
+	int WidthOffset = FMath::Clamp((InImageArray[0].Row.Num() - Width) / 2, 0, 5); // Issue
 
 	for (int i = 0; i < InWindow.Contents.Num(); i++)
 	{

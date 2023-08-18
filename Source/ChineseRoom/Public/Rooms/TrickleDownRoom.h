@@ -22,8 +22,25 @@ protected:
 	virtual void SetUpImageArrays() override;
 	virtual void SetImageArray(TArray<FSpecialCharacterImageRow> InImageArray, FWindow InWindow) override;
 
+	void ShiftWorkspace(bool ToTheLeft);
+
+	int WorkspaceOffset = 0;
+
 	//Function that will be called once the AutoSolveButton is clicked
 	virtual void AutoSolveButtonClicked() override;
+
+	virtual void FocusWindowLeftButtonClicked() override;
+	virtual void FocusWindowRightButtonClicked() override;
+
+	// Used to bind the buttons to their functions
+	virtual bool Initialize() override;
+
+	// Pointer to the RotateFocusWindowButton, must have the same name
+	UPROPERTY(meta = (BindWidget))
+	UButton* RotateFocusWindowButton;
+
+	UFUNCTION()
+	void RotateFocusWindowButtonClicked();
 
 	//------- Left Page --------//
 	UPROPERTY(meta = (BindWidget))

@@ -226,11 +226,11 @@ protected:
 
 	//Function that will be called once the FocusWindowLeftButton is clicked
 	UFUNCTION()
-	void FocusWindowLeftButtonClicked();
+	virtual void FocusWindowLeftButtonClicked();
 
 	//Function that will be called once the FocusWindowRightButton is clicked
 	UFUNCTION()
-	void FocusWindowRightButtonClicked();
+	virtual void FocusWindowRightButtonClicked();
 
 	//Function that will be called once the FocusWindowUpButton is clicked
 	UFUNCTION()
